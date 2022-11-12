@@ -19,7 +19,7 @@ function App() {
   return (
     <div className="h-screen w-full text-black flex">
       <SidePane id="leftPane">
-        <SideButton id="1" targetId="6" />
+        <SideButton id="1" targetId="7" />
         <SideButton id="2" targetId="6" />
         <SideButton id="3" targetId="6" />
         <SideButton id="4" targetId="6" />
@@ -28,6 +28,7 @@ function App() {
       <canvas id="canvas" className="m-auto bottom-0"></canvas>
       <SidePane id="rightPane" pos="right">
         <SideButton id="6" targetId="5" />
+        <SideButton id="7" targetId="1" />
       </SidePane>
     </div>
   );
