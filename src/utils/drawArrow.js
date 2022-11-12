@@ -1,87 +1,114 @@
+import {
+  draw4thQuadrantArc,
+  draw1stQuadrantArc,
+  draw3rdQuadrantArc,
+  draw2ndQuadrantArc,
+} from "./drawArc";
+import { drawArrowHead } from "./drawArrowHead";
+
 export function drawArrow(id, targetId) {
-  const canvasElm = document.querySelector("#canvas");
-  if (!canvasElm) {
+  const CANVAS = document.querySelector("#canvas");
+  const CTX = CANVAS.getContext("2d");
+  const START_ELM = document.querySelector(id);
+  const END_ELM = document.querySelector(targetId);
+
+  const START = {
+    x: START_ELM.offsetLeft,
+    y: START_ELM.offsetTop + START_ELM.offsetHeight / 2,
+  };
+  const END = {
+    x: END_ELM.offsetLeft,
+    y: END_ELM.offsetTop + END_ELM.offsetHeight / 2,
+  };
+
+  if (!CANVAS) {
     throw Error("Canvas not founds!!");
     return;
   }
-  const ctx = canvasElm.getContext("2d");
-
-  const fromElm = document.querySelector(id);
-  const targetElm = document.querySelector(targetId);
-
-  if (!fromElm || !targetElm) {
+  if (!START_ELM || !END_ELM) {
     throw Error(
-      "Unable to find Start element or target element. Make sure you passed the correct ids"
+      "Unable to find START element or target element. Make sure you passed the correct ids"
     );
     return;
   }
 
-  const start = {
-    x: fromElm.offsetLeft,
-    y: fromElm.offsetTop + fromElm.offsetHeight / 2,
-  };
-  const end = {
-    x: targetElm.offsetLeft - 175,
-    y: targetElm.offsetTop + targetElm.offsetHeight / 2,
-  };
+  let midDistance = (END.x - START.x) / 2;
 
-  let x_axis_mid_distance = (end.x - start.x) / 2;
   let DIRECTION = "LEFT-RIGHT";
-  if (x_axis_mid_distance < 0) {
+
+  if (midDistance < 0) {
     DIRECTION = "RIGHT-LEFT";
-    end.x = targetElm.offsetLeft;
-    start.x = fromElm.offsetLeft-175;
+    END.x = END_ELM.offsetLeft;
+    START.x = START_ELM.offsetLeft - 175;
+  } else {
+    END.x = END_ELM.offsetLeft - 175;
   }
-  x_axis_mid_distance = Math.abs(x_axis_mid_distance);
+
+  if (START.y === END.y) {
+    DIRECTION = "STRAIGHT";
+  }
+
+  midDistance = Math.abs(midDistance);
+
+  console.log("START => ", START);
+  console.log("END => ", END);
+  console.log(midDistance);
 
   switch (DIRECTION) {
+    // line start from left and end to right and line is not straight
     case "LEFT-RIGHT":
-      if (start.y !== end.y) {
-        // the line will have to bend in the middle
-        ctx.beginPath();
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(x_axis_mid_distance - 5, start.y);
-        ctx.arc(x_axis_mid_distance - 5,start.y - 5,5,0.5 * Math.PI,0,true);
-        ctx.lineTo(x_axis_mid_distance, end.y + 5);
-        ctx.arc(x_axis_mid_distance + 5,end.y,5,Math.PI,1.5 * Math.PI,false);
-        ctx.lineTo(end.x, end.y);
+      // the line will have to bEND in the middle
+      CTX.beginPath();
+      CTX.moveTo(START.x, START.y);
+      CTX.lineTo(midDistance - 5, START.y);
+      if (START.y > END.y) {
+        // line have to bend up i.e., turn left;
+        draw4thQuadrantArc(CTX, midDistance - 5, START.y - 5, 5, false);
       } else {
-        // straight line
-        ctx.beginPath();
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, end.y);
+        // line have to bend down i.e., turn right;
+        draw1stQuadrantArc(CTX, midDistance - 5, START.y + 5, 5, true);
       }
-      // drawing arrow head
-      ctx.moveTo(end.x - 10, end.y - 7);
-      ctx.lineTo(end.x, end.y);
-      ctx.moveTo(end.x - 10, end.y + 7);
-      ctx.lineTo(end.x, end.y);
-      ctx.strokeStyle = "#000";
-      ctx.stroke();
+      if (START.y > END.y) {
+        CTX.lineTo(midDistance, END.y + 5);
+        draw2ndQuadrantArc(CTX, midDistance + 5, END.y + 5, 5, true);
+      } else {
+        CTX.lineTo(midDistance, END.y - 5);
+        draw3rdQuadrantArc(CTX, midDistance + 5, END.y - 5, 5, false);
+      }
+      CTX.lineTo(END.x, END.y);
+      drawArrowHead(CTX, END.x, END.y, true);
+
       break;
+
+    // line start from right and end to left and line is not straight
     case "RIGHT-LEFT":
-      if(start.y !== end.y){
-        // line have to bend in the middle
-        ctx.beginPath();
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(x_axis_mid_distance + 5, start.y);
-        ctx.arc(x_axis_mid_distance + 5, start.y + 5, 5, 1.5 * Math.PI, Math.PI, true);
-        ctx.lineTo(x_axis_mid_distance, end.y - 5);
-        ctx.arc(x_axis_mid_distance - 5, end.y -5, 5 , 0, 0.5 * Math.PI,false);
-        ctx.lineTo(end.x, end.y);
-      }else{
-        // straight line
-        ctx.beginPath();
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, end.y);
+      // line have to bEND in the middle
+      CTX.beginPath();
+      CTX.moveTo(START.x, START.y);
+      CTX.lineTo(midDistance + 5, START.y);
+      if (START.y > END.y) {
+        draw3rdQuadrantArc(CTX, midDistance + 5, START.y - 5, 5, true);
+      } else {
+        draw2ndQuadrantArc(CTX, midDistance + 5, START.y + 5, 5, false);
       }
-      ctx.moveTo(end.x + 10, end.y - 7);
-      ctx.lineTo(end.x, end.y);
-      ctx.moveTo(end.x + 10, end.y + 7);
-      ctx.lineTo(end.x, end.y);
-      ctx.strokeStyle = "#000";
-      ctx.stroke();
+      if (START.y > END.y) {
+        draw1stQuadrantArc(CTX, midDistance - 5, END.y + 5, 5, false);
+      } else {
+        draw4thQuadrantArc(CTX, midDistance - 5, END.y - 5, 5, true);
+      }
+      CTX.lineTo(END.x, END.y);
+      drawArrowHead(CTX, END.x, END.y, false);
+      break;
+    // straight line
+    case "STRAIGHT":
+      CTX.beginPath();
+      CTX.moveTo(START.x, START.y);
+      CTX.lineTo(END.x, END.y);
+
     default:
       break;
   }
+
+  CTX.strokeStyle = "#000";
+  CTX.stroke();
 }
