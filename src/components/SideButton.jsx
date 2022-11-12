@@ -6,7 +6,7 @@ export function SideButton({ id, targetId }) {
       id={"button" + id}
       onMouseEnter={() => drawArrow(("#button" + id), ("#button" + targetId))}
       onMouseLeave={eraseCanvas}
-      className="border border-white w-fit rounded-md p-3 px-4 my-2 cursor-pointer hover:scale-105 hover:rotate-2"
+      className="border border-black w-fit rounded-md p-3 px-4 my-2 cursor-pointer hover:scale-105 hover:rotate-2"
     >
       <h3>This is item {id}</h3>
     </div>

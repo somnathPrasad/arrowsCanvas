@@ -15,7 +15,7 @@ export function drawArrow(id, targetId) {
     }
 
     const start = { x: fromElm.offsetLeft, y: fromElm.offsetTop+(fromElm.offsetHeight/2) };
-    const end = { x: targetElm.offsetLeft, y: targetElm.offsetTop+(targetElm.offsetHeight/2) };
+    const end = { x: targetElm.offsetLeft-175, y: targetElm.offsetTop+(targetElm.offsetHeight/2) };
   
     const x_axis_mid_distance = Math.abs((end.x - start.x) / 2);
   
@@ -32,6 +32,11 @@ export function drawArrow(id, targetId) {
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
       }
+      // drawing arrow head
+      ctx.moveTo(end.x-10, end.y-7);
+      ctx.lineTo(end.x, end.y);
+      ctx.moveTo(end.x-10, end.y+7);
+      ctx.lineTo(end.x, end.y);
       ctx.strokeStyle = "#000";
       ctx.stroke();
   }
